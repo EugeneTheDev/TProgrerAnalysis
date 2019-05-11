@@ -1,6 +1,7 @@
 import re
 
 import requests as req
+from requests.exceptions import ConnectionError
 
 import util
 
@@ -23,8 +24,7 @@ def check_orthography(text):
 
 def check_image(url, width, height):
     text = util.get_text_from_image(url)
-    print(len(text))
-    if not 50 < len(text) < 110:
+    if not 80 < len(text) < 130:
         if 680 < width < 720 and 480 < height < 520:
             return "OK", 0
         else:
@@ -34,7 +34,11 @@ def check_image(url, width, height):
 
 
 def check_link(url):
-    response = req.get(url=url)
+    try:
+        response = req.get(url=url)
+    except ConnectionError:
+        return False, 1
+
     if response.ok:
         return True, 0
     else:
@@ -55,3 +59,37 @@ def check_tags(text):
                 points += 1
         return tags_info, points
 
+
+def perform_full_analysis(post):
+    points = 0
+    report = {}
+
+    if "text" in post:
+        orth_response = check_orthography(post["text"])
+        report["text"] = orth_response[0]
+        points += orth_response[1]
+
+        tags_response = check_tags(post["text"])
+        report["tags"] = tags_response[0]
+        points += tags_response[1]
+
+    if "images" in post:
+        report["images"] = []
+        for image in post["images"]:
+            image_response = check_image(image["url"], image["width"], image["height"])
+            report["images"].append(image_response[0])
+            points += image_response[1]
+
+    if "url" in post:
+        link_response = check_link(post["url"])
+        report["is_working_link"] = link_response[0]
+        points += link_response[1]
+
+    if points == 0:
+        report["result"] = "excellent"
+    elif 0 < points < 5:
+        report["result"] = "acceptable"
+    else:
+        report["result"] = "bad"
+
+    return report

@@ -2,15 +2,14 @@ import flask
 from flask import Flask
 from flask import request
 
+import checkquality
+
 app = Flask(__name__)
 
 
 @app.route("/quality", methods=["POST"])
 def hello_world():
-    post = request.json
-    return flask.jsonify({
-        "response": ""
-    })
+    return flask.jsonify(checkquality.perform_full_analysis(request.json))
 
 
 if __name__ == "__main__":
