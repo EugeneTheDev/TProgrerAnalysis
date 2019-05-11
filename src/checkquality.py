@@ -1,3 +1,5 @@
+import re
+
 import requests as req
 
 
@@ -17,10 +19,15 @@ def check_orthography(text):
 
 
 def check_image(url, width, height):
-    if 680 < width < 720 and 480 < height < 520:
-        return True
+    text = get_text_from_image(url)
+    print(len(text))
+    if not 50 < len(text) < 110:
+        if 680 < width < 720 and 480 < height < 520:
+            return "OK"
+        else:
+            return "Bad image size (700x500 is the best)"
     else:
-        return False
+        return "Text on image is too long"
 
 
 def check_link(url):
@@ -30,15 +37,17 @@ def check_link(url):
     else:
         return False
 
-def ocr_space_url(url, overlay=False, api_key='374e73777688957', language='rus'):
-    payload = {'url': url,
-               'isOverlayRequired': overlay,
-               'apikey': "374e73777688957",
-               'language': language,
-               }
-    r = req.post('https://api.ocr.space/parse/image',
-                      data=payload,
-                      )
-    return r.content.decode()
 
-print(ocr_space_url("https://sun1-24.userapi.com/c635106/v635106619/2ab15/1JGyBVzkfcY.jpg"))
+def check_tags(text):
+    print(re.findall(r"#[а-яА-Я@]+", text))
+
+
+def get_text_from_image(url, language='rus'):
+    payload = {'url': url,
+               'apikey': "374e73777688957",
+               "language": language
+               }
+    r = req.post('https://api.ocr.space/parse/image', data=payload)
+    return r.json()["ParsedResults"][0]["ParsedText"]
+
+
