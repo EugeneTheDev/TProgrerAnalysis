@@ -30,3 +30,15 @@ def check_link(url):
     else:
         return False
 
+def ocr_space_url(url, overlay=False, api_key='374e73777688957', language='rus'):
+    payload = {'url': url,
+               'isOverlayRequired': overlay,
+               'apikey': "374e73777688957",
+               'language': language,
+               }
+    r = req.post('https://api.ocr.space/parse/image',
+                      data=payload,
+                      )
+    return r.content.decode()
+
+print(ocr_space_url("https://sun1-24.userapi.com/c635106/v635106619/2ab15/1JGyBVzkfcY.jpg"))
