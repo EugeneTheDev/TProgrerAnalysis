@@ -2,7 +2,7 @@ import flask
 from flask import Flask
 from flask import request
 
-import checkquality
+from src import checkquality
 
 app = Flask(__name__)
 

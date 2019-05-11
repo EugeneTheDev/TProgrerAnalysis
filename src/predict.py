@@ -3,7 +3,7 @@ from watson_developer_cloud.natural_language_understanding_v1 import Features
 from watson_developer_cloud.natural_language_understanding_v1 import NaturalLanguageUnderstandingV1
 from watson_developer_cloud.watson_service import WatsonApiException
 
-import util
+from src import util
 
 
 def get_emotions(text):

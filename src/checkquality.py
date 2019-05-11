@@ -3,7 +3,7 @@ import re
 import requests as req
 from requests.exceptions import ConnectionError
 
-import util
+from src import util
 
 
 def check_orthography(text):
