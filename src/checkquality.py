@@ -15,3 +15,18 @@ def check_orthography(text):
 
     print(text)
 
+
+def check_image(url, width, height):
+    if 680 < width < 720 and 480 < height < 520:
+        return True
+    else:
+        return False
+
+
+def check_link(url):
+    response = req.get(url=url)
+    if response.ok:
+        return True
+    else:
+        return False
+
