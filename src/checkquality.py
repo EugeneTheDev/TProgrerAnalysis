@@ -35,7 +35,7 @@ def check_image(url, width, height):
 
 def check_link(url):
     try:
-        response = req.get(url=url)
+        response = req.get(url=url, timeout=5)
     except ConnectionError:
         return False, 1
 
