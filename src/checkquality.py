@@ -19,7 +19,7 @@ def check_orthography(text):
             err_count += 1
         return text, err_count
     else:
-        return "OK", 0
+        return True, 0
 
 
 def check_image(url, width, height):
@@ -37,18 +37,20 @@ def check_link(url):
     try:
         response = req.get(url=url, timeout=5)
     except ConnectionError:
-        return False, 1
+        return False, 4
 
     if response.ok:
         return True, 0
     else:
-        return False, 1
+        return False, 4
 
 
 def check_tags(text):
     tags = [el.replace("#", "") for el in re.findall(r"#[а-яА-Я@\w]+", text)]
-    if len(tags) == 0 or len(tags) > 4:
-        return "Bad count of tags (best between 2 and 4)", 2
+    if len(tags) == 0:
+        return f"Suggestion: {' '.join(util.parse_hashtag_suggestion(text))}", 1
+    elif len(tags) > 4:
+        return "Too many tags (best between 2 and 4)", 1
     else:
         tags_info = {}
         points = 0
@@ -85,9 +87,9 @@ def perform_full_analysis(post):
         report["is_working_link"] = link_response[0]
         points += link_response[1]
 
-    if points == 0:
+    if 0 <= points <= 3:
         report["result"] = "excellent"
-    elif 0 < points < 5:
+    elif 3 < points < 5:
         report["result"] = "acceptable"
     else:
         report["result"] = "bad"

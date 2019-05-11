@@ -27,23 +27,49 @@ def get_emotions(text):
 
 def likes_analysis(likes, members, previous):
     data = [el["likes_count"] / el["members_count"] for el in previous]
-    data.append(likes/members)
+    data.append(likes / members)
     z = np.polyfit(np.arange(0, len(data)), np.array(data), 1)
-    return "Growing" if z[0] > 0 else "Falling", z[0]
+    return (f"Growing with regression {z[0]}", 0) if z[0] > 0 else (f"Falling with regression {z[0]}", -z[0]*10000)
 
 
-def emotions_analysis(comments_text, commentary):
+def emotions_analysis(comments_text):
     emotions = get_emotions(comments_text)
-    emotions_data = commentary + emotions
+    # noinspection PyTypeChecker
+    result = 0.5 * emotions["joy"] - 0.15 * emotions["sadness"] - 0.1 * emotions["fear"] \
+        - 0.05 * emotions["disgust"] - 0.2 * emotions["anger"]
+    return ("Positive", 0) if result > 0 else ("Negative", -result*10)
 
-    sadness_data = [el["sadness"] for el in emotions_data]
+
+def perform_full_prediction(info):
+    report = {}
+    points = 0
+
+    likes_response = likes_analysis(info["likes_count"], info["members_count"], info["previous"])
+    report["likes"] = likes_response[0]
+    points += likes_response[1]
+
+    emotions_response = emotions_analysis(info["comments_text"])
+    report["emotions"] = emotions_response[0]
+    points += emotions_response[1]
+
+    if points == 0:
+        report["result"] = "excellent"
+    elif 0 < points <= 1:
+        report["result"] = "acceptable"
+    else:
+        report["result"] = "bad"
+
+    return report
 
 
-
-
-print(likes_analysis(886, 261_453, [
-    {"members_count": 261_437, "likes_count": 456},
-    {"members_count": 261_400, "likes_count": 768},
-    {"members_count": 261_370, "likes_count": 945},
-    {"members_count": 261_320, "likes_count": 567}
-]))
+print(perform_full_prediction({
+    "likes_count": 245,
+    "members_count": 261_453,
+    "comments_text": "Ахах, годно",
+    "previous": [
+        {"members_count": 261_437, "likes_count": 256},
+        {"members_count": 261_400, "likes_count": 968},
+        {"members_count": 261_370, "likes_count": 845},
+        {"members_count": 261_320, "likes_count": 767}
+    ]
+}))

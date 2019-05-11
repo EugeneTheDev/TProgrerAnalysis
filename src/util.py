@@ -31,3 +31,13 @@ def parse_hashtag_stats(hashtag):
         .find_all("p")[6] \
         .get_text() \
         .replace("RiteKit recommendation (color)", "Score")
+
+
+def parse_hashtag_suggestion(text):
+    response = req.post(url="https://ritekit.com/api-demo/hashtag-suggestions", data={
+        "topic": text,
+        "_do": "apiDemo-form-submit",
+        "_submit": "Show hashtag suggestions"
+    })
+    soup = BeautifulSoup(response.text, "html.parser")
+    return [el.find("td").get_text() for el in soup.find("div", class_="table-responsive").find_all("tr")[1:]]
