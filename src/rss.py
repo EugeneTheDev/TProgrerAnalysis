@@ -9,7 +9,7 @@ def read_news():
     soup = BeautifulSoup(feed.text)
 
     response = ""
-    for el in soup.find_all("entry")[-15:]:
+    for el in soup.find_all("entry")[-5:]:
         title = el.find("title").get_text().replace("&#39;", "`").replace("&nbsp;", " ").replace("&quot;", "'")
         link = el.find("link")["href"]
         content = el.find("content").get_text().replace("&#39;", "`").replace("&nbsp;", " ").replace("&quot;", "'")
