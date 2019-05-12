@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 
 def read_news():
-    feed = req.get("https://www.google.com/alerts/feeds/03091274654750541825/1956891941018950863")
+    feed = req.get("https://www.google.com/alerts/feeds/03091274654750541825/15686279125863682196")
     soup = BeautifulSoup(feed.text)
 
     response = ""
@@ -14,10 +14,9 @@ def read_news():
         link = el.find("link")["href"]
         content = el.find("content").get_text().replace("&#39;", "`").replace("&nbsp;", " ").replace("&quot;", "'")
 
-        if "Google Alert - " not in title:
-            url = re.findall(r"url=.+&ct", link)[0].replace("url=", "").replace("&ct", "").replace("%3F", "?")\
-                .replace("%3D", "=").replace("%26", "&")
-            response += f"{title}\n{content}\n{url}\n\n"
+        url = re.findall(r"url=.+&ct", link)[0].replace("url=", "").replace("&ct", "").replace("%3F", "?") \
+            .replace("%3D", "=").replace("%26", "&")
+        response += f"{title}\n{content}\n{url}\n\n"
 
     return {"text": response}
 

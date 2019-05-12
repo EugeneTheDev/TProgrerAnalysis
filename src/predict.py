@@ -40,7 +40,7 @@ def emotions_analysis(comments_text):
     # noinspection PyTypeChecker
     result = 0.5 * emotions["joy"] - 0.15 * emotions["sadness"] - 0.1 * emotions["fear"] \
         - 0.05 * emotions["disgust"] - 0.2 * emotions["anger"]
-    return ("Positive", 0, emotions) if result > 0 else ("Negative", -result*15, emotions)
+    return ("Positive", 0, emotions) if result > 0 else ("Negative", -result*15 + 0.1, emotions)
 
 
 def perform_full_prediction(info):
