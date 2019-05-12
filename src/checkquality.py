@@ -19,14 +19,14 @@ def check_orthography(text):
             err_count += 1
         return text, err_count
     else:
-        return True, 0
+        return "OK", 0
 
 
 def check_image(url, width, height):
     text = util.get_text_from_image(url)
     if not 80 < len(text) < 130:
         if 680 < width < 720 and 480 < height < 520:
-            return True, 0
+            return "OK", 0
         else:
             return "Bad image size (700x500 is the best)", 1
     else:
@@ -48,15 +48,15 @@ def check_link(url):
 def check_tags(text):
     tags = [el.replace("#", "") for el in re.findall(r"#[а-яА-Я@\w]+", text)]
     if len(tags) == 0:
-        return util.parse_hashtag_suggestion(text), 1
+        return f"Suggestion: {' '.join(util.parse_hashtag_suggestion(text))}", 1
     elif len(tags) > 4:
         return "Too many tags (best between 2 and 4)", 1
     else:
-        tags_info = []
+        tags_info = ""
         points = 0
         for tag in tags:
             tag_info = util.parse_hashtag_stats(tag)
-            tags_info.append(f"{tag} - {tag_info}")
+            tags_info += f"{tag} - {tag_info}\n"
             if int(re.findall(r"\d", tag_info)[0]) < 2:
                 points += 1
         return tags_info, points

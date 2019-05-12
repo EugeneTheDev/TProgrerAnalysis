@@ -1,12 +1,12 @@
 import re
 
 import requests as req
-from bs4 import BeautifulStoneSoup
+from bs4 import BeautifulSoup
 
 
 def read_news():
     feed = req.get("https://www.google.com/alerts/feeds/03091274654750541825/1956891941018950863")
-    soup = BeautifulStoneSoup(feed.text)
+    soup = BeautifulSoup(feed.text)
 
     response = []
     for el in soup.find_all("entry")[-30:]:
