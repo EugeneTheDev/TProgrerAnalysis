@@ -64,5 +64,10 @@ def perform_full_prediction(info):
     else:
         report["result"] = "bad"
 
+    print(points, emotions_response[1], likes_response[1])
+
     return report
+
+
+
 
