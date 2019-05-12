@@ -26,10 +26,13 @@ def get_emotions(text):
 
 
 def likes_analysis(likes, members, previous):
-    data = [el["likes_count"] / el["members_count"] for el in previous]
-    data.append(likes / members)
-    z = np.polyfit(np.arange(0, len(data)), np.array(data), 1)
-    return (f"Growing", 0) if z[0] > 0 else (f"Falling", -z[0]*10000)
+    if previous:
+        data = [el["likes_count"] / el["members_count"] for el in previous]
+        data.append(likes / members)
+        z = np.polyfit(np.arange(0, len(data)), np.array(data), 1)
+        return ("Growing", 0) if z[0] > 0 else ("Falling", -z[0]*10000)
+    else:
+        return "We need at least two posts data to perform analysis", 0
 
 
 def emotions_analysis(comments_text):
