@@ -12,6 +12,7 @@ watson-developer-cloud = "*"
 beautifulsoup4 = "*"
 gunicorn = "*"
 numpy = "*"
+httplib = "*"
 
 [requires]
 python_version = "3.7"
