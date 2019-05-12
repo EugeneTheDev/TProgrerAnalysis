@@ -17,7 +17,7 @@ def read_news():
         if "Google Alert - " not in title:
             url = re.findall(r"url=.+&ct", link)[0].replace("url=", "").replace("&ct", "").replace("%3F", "?")\
                 .replace("%3D", "=").replace("%26", "&")
-            response += f"{title}\n{content}\n{link}\n\n"
+            response += f"{title}\n{content}\n{url}\n\n"
 
     return {"text": response}
 
