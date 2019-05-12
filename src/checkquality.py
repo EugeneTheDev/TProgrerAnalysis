@@ -48,7 +48,8 @@ def check_link(url):
 def check_tags(text):
     tags = [el.replace("#", "") for el in re.findall(r"#[а-яА-Я@\w]+", text)]
     if len(tags) == 0:
-        return f"Suggestion: {' '.join(util.parse_hashtag_suggestion(text))}", 1
+        tags_suggestions = util.parse_hashtag_suggestion(text)
+        return f"Suggestion: {' '.join(tags_suggestions) if len(tags_suggestions) > 0 else 'None'}", 1
     elif len(tags) > 4:
         return "Too many tags (best between 2 and 4)", 1
     else:
