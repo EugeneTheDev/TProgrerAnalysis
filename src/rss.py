@@ -8,7 +8,7 @@ def read_news():
     feed = req.get("https://www.google.com/alerts/feeds/03091274654750541825/1956891941018950863")
     soup = BeautifulSoup(feed.text)
 
-    response = []
+    response = ""
     for el in soup.find_all("entry")[-30:]:
         title = el.find("title").get_text().replace("&#39;", "`").replace("&nbsp;", " ").replace("&quot;", "'")
         link = el.find("link")["href"]
@@ -17,14 +17,7 @@ def read_news():
         if "Google Alert - " not in title:
             url = re.findall(r"url=.+&ct", link)[0].replace("url=", "").replace("&ct", "").replace("%3F", "?")\
                 .replace("%3D", "=").replace("%26", "&")
-            response.append({
-                "title": title,
-                "content": content,
-                "link": url
-            })
+            response += f"{title}\n{content}\n{link}\n\n"
 
-    return response
+    return {"text": response}
 
-
-for el in read_news():
-    print(el["title"], el["content"], el["link"], "\n", sep="\n")

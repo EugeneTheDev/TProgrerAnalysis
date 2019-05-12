@@ -4,6 +4,7 @@ from flask import request
 
 from src import checkquality
 from src import predict
+from src import rss
 
 app = Flask(__name__)
 
@@ -16,6 +17,11 @@ def quality_post():
 @app.route("/prediction", methods=["POST"])
 def predictions_post():
     return flask.jsonify(predict.perform_full_prediction(request.json))
+
+
+@app.route("/rss", methods=["GET"])
+def get_rss():
+    return flask.jsonify(rss.read_news())
 
 
 if __name__ == "__main__":
