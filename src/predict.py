@@ -37,7 +37,7 @@ def emotions_analysis(comments_text):
     # noinspection PyTypeChecker
     result = 0.5 * emotions["joy"] - 0.15 * emotions["sadness"] - 0.1 * emotions["fear"] \
         - 0.05 * emotions["disgust"] - 0.2 * emotions["anger"]
-    return ("Positive", 0) if result > 0 else ("Negative", -result*10)
+    return ("Positive", 0, emotions) if result > 0 else ("Negative", -result*10, emotions)
 
 
 def perform_full_prediction(info):
@@ -49,7 +49,9 @@ def perform_full_prediction(info):
     points += likes_response[1]
 
     emotions_response = emotions_analysis(info["comments_text"])
-    report["emotions"] = emotions_response[0]
+    report["emotions"] = {}
+    report["emotions"]["percentage"] = emotions_response[2]
+    report["emotions"]["type"] = emotions_response[0]
     points += emotions_response[1]
 
     if points == 0:
@@ -61,15 +63,3 @@ def perform_full_prediction(info):
 
     return report
 
-
-print(perform_full_prediction({
-    "likes_count": 245,
-    "members_count": 261_453,
-    "comments_text": "Ахах, годно",
-    "previous": [
-        {"members_count": 261_437, "likes_count": 256},
-        {"members_count": 261_400, "likes_count": 968},
-        {"members_count": 261_370, "likes_count": 845},
-        {"members_count": 261_320, "likes_count": 767}
-    ]
-}))

@@ -87,9 +87,9 @@ def perform_full_analysis(post):
         report["is_working_link"] = link_response[0]
         points += link_response[1]
 
-    if 0 <= points <= 3:
+    if 0 <= points <= 2:
         report["result"] = "excellent"
-    elif 3 < points < 5:
+    elif 2 < points < 5:
         report["result"] = "acceptable"
     else:
         report["result"] = "bad"
