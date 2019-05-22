@@ -12,87 +12,76 @@ def check_orthography(text):
     }).json()
 
     if response:
-        err_count = 0
         for el in response:
             text = text[:el["pos"]] + text[el["pos"]:el["pos"] + el["len"]].replace(el["word"], el["s"][0])\
                    + text[el["pos"] + el["len"]:]
-            err_count += 1
-        return text, err_count
+        return text
     else:
-        return "OK", 0
+        return ""
 
 
 def check_image(url, width, height):
+    result = ""
     text = util.get_text_from_image(url)
-    if not 80 < len(text) < 130:
-        if 680 < width < 720 and 480 < height < 520:
-            return "OK", 0
-        else:
-            return "Bad image size (700x500 is the best)", 1
-    else:
-        return "Text on image is too long", 1
+    if width < 700 and height < 500:
+        result += "Image too small\n"
+
+    if width/height < 0.8 or width/height > 2:
+        result += "Bad proportions"
+
+    return result
 
 
 def check_link(url):
     try:
         response = req.get(url=url, timeout=5)
     except ConnectionError:
-        return False, 4
+        return False
 
     if response.ok:
-        return True, 0
+        return True
     else:
-        return False, 4
+        return False
 
 
 def check_tags(text):
     tags = [el.replace("#", "") for el in re.findall(r"#[а-яА-Я@\w]+", text)]
-    if len(tags) == 0:
+    if not tags:
         tags_suggestions = util.parse_hashtag_suggestion(text)
-        return f"Suggestion: {' '.join(tags_suggestions) if len(tags_suggestions) > 0 else 'None'}", 1
+        return f"{'Suggestion: '.join(tags_suggestions) if len(tags_suggestions) > 0 else ''}"
     elif len(tags) > 4:
-        return "Too many tags (best between 2 and 4)", 1
-    else:
-        tags_info = ""
-        points = 0
-        for tag in tags:
-            tag_info = util.parse_hashtag_stats(tag)
-            tags_info += f"{tag} - {tag_info}\n"
-            if int(re.findall(r"\d", tag_info)[0]) < 2:
-                points += 1
-        return tags_info, points
+        return "Too many tags (best between 2 and 4)"
+
+    return ""
 
 
 def perform_full_analysis(post):
-    points = 0
     report = {}
 
     if "text" in post:
         orth_response = check_orthography(post["text"])
-        report["text"] = orth_response[0]
-        points += orth_response[1]
+        report["text"] = {
+            "ok": orth_response == "",
+            "message": orth_response
+        }
 
         tags_response = check_tags(post["text"])
-        report["tags"] = tags_response[0]
-        points += tags_response[1]
+        report["tags"] ={
+            "ok": tags_response == "",
+            "message": tags_response
+        }
 
     if "images" in post:
         report["images"] = []
         for image in post["images"]:
             image_response = check_image(image["url"], image["width"], image["height"])
-            report["images"].append(image_response[0])
-            points += image_response[1]
+            report["images"].append({
+                "ok": image_response == "",
+                "message": image_response
+            })
 
     if "url" in post:
         link_response = check_link(post["url"])
-        report["is_working_link"] = link_response[0]
-        points += link_response[1]
-
-    if 0 <= points <= 2:
-        report["result"] = "excellent"
-    elif 2 < points < 5:
-        report["result"] = "acceptable"
-    else:
-        report["result"] = "bad"
+        report["is_working_link"] = link_response
 
     return report
