@@ -1,10 +1,17 @@
+import boto3
 import requests as req
 from bs4 import BeautifulSoup
-
 from watson_developer_cloud.natural_language_understanding_v1 import EmotionOptions
 from watson_developer_cloud.natural_language_understanding_v1 import Features
 from watson_developer_cloud.natural_language_understanding_v1 import NaturalLanguageUnderstandingV1
 from watson_developer_cloud.watson_service import WatsonApiException
+
+from src import credentials as cr
+
+rekognition = boto3.client("rekognition", aws_access_key_id=cr.KEY_ID,
+                           aws_secret_access_key= cr.ACCESS_KEY,
+                           region_name="eu-west-1")
+
 
 
 def translate(text):
@@ -16,13 +23,20 @@ def translate(text):
     return response.json()[0][0][0]
 
 
-def get_text_from_image(url, language='rus'):
-    payload = {'url': url,
-               'apikey': "374e73777688957",
-               "language": language
-               }
-    r = req.post('https://api.ocr.space/parse/image', data=payload)
-    return r.json()["ParsedResults"][0]["ParsedText"]
+def get_text_square_from_image(url):
+    response = req.get(url)
+
+    if response.ok:
+        result = rekognition.detect_text(
+            Image={
+                "Bytes": response.content
+            }
+        )
+        square = 0
+        for label in result["TextDetections"]:
+            square += label["Geometry"]["BoundingBox"]["Width"] * label["Geometry"]["BoundingBox"]["Height"]
+        return square
+    return 0
 
 
 def parse_hashtag_suggestion(text):

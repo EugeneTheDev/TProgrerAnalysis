@@ -22,12 +22,14 @@ def check_orthography(text):
 
 def check_image(url, width, height):
     result = ""
-    text = util.get_text_from_image(url)
     if width < 700 and height < 500:
         result += "Image too small\n"
 
     if width/height < 0.8 or width/height > 2:
-        result += "Bad proportions"
+        result += "Bad proportions\n"
+
+    if util.get_text_square_from_image(url) > 0.2:
+        result += "Too many text on image"
 
     return result
 
@@ -36,12 +38,12 @@ def check_link(url):
     try:
         response = req.get(url=url, timeout=5)
     except ConnectionError:
-        return False
+        return "Link doesnt work"
 
     if response.ok:
-        return True
+        return ""
     else:
-        return False
+        return "Link doesnt work"
 
 
 def check_tags(text):
@@ -61,13 +63,13 @@ def perform_full_analysis(post):
     if "text" in post:
         orth_response = check_orthography(post["text"])
         report["text"] = {
-            "ok": orth_response == "",
+            "send": orth_response == "",
             "message": orth_response
         }
 
         tags_response = check_tags(post["text"])
-        report["tags"] ={
-            "ok": tags_response == "",
+        report["tags"] = {
+            "send": tags_response == "",
             "message": tags_response
         }
 
@@ -76,12 +78,16 @@ def perform_full_analysis(post):
         for image in post["images"]:
             image_response = check_image(image["url"], image["width"], image["height"])
             report["images"].append({
-                "ok": image_response == "",
+                "send": image_response == "",
                 "message": image_response
             })
 
     if "url" in post:
         link_response = check_link(post["url"])
-        report["is_working_link"] = link_response
+        report["link"] = {
+            "send": link_response == "",
+            "message": link_response
+        }
 
     return report
+
