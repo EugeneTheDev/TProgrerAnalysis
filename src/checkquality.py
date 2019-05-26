@@ -1,5 +1,3 @@
-import re
-
 import requests as req
 from requests.exceptions import ConnectionError
 
@@ -46,17 +44,6 @@ def check_link(url):
         return "Link doesnt work"
 
 
-def check_tags(text):
-    tags = [el.replace("#", "") for el in re.findall(r"#[а-яА-Я@\w]+", text)]
-    if not tags:
-        tags_suggestions = util.parse_hashtag_suggestion(text)
-        return f"{'Suggestion: '.join(tags_suggestions) if len(tags_suggestions) > 0 else ''}"
-    elif len(tags) > 4:
-        return "Too many tags (best between 2 and 4)"
-
-    return ""
-
-
 def perform_full_analysis(post):
     report = {}
 
@@ -65,12 +52,6 @@ def perform_full_analysis(post):
         report["text"] = {
             "send": orth_response == "",
             "message": orth_response
-        }
-
-        tags_response = check_tags(post["text"])
-        report["tags"] = {
-            "send": tags_response == "",
-            "message": tags_response
         }
 
     if "images" in post:
