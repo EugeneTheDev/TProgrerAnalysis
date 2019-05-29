@@ -21,27 +21,28 @@ def check_orthography(text):
 def check_image(url, width, height):
     result = ""
     if width < 700 and height < 500:
-        result += "Image too small\n"
+        result += "Изображение слишком маленькое (должно быть больше 700х500)\n"
 
     if width/height < 0.8 or width/height > 2:
-        result += "Bad proportions\n"
+        result += "Плохие пропорции\n"
 
     if util.get_text_square_from_image(url) > 0.2:
-        result += "Too many text on image"
+        result += "Слишком много текста на изображении\n"
 
     return result
 
 
 def check_link(url):
+    message = "Ссылка не работает или слишком долго загружается"
     try:
         response = req.get(url=url, timeout=5)
     except ConnectionError:
-        return "Link doesnt work"
+        return message
 
     if response.ok:
         return ""
     else:
-        return "Link doesnt work"
+        return message
 
 
 def perform_full_analysis(post):

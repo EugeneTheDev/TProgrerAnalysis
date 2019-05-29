@@ -4,9 +4,9 @@ from src import util
 def likes_analysis(likes):
     res = analyze_values(likes)
     if res > 0:
-        return "Wow! Seems like this post was very cool"
+        return "Многа кла$$ов!"
     elif res < 0:
-        return "Oh... This post wasn`t so good"
+        return "Кла$$ов мало("
     else:
         return ""
 
@@ -14,9 +14,9 @@ def likes_analysis(likes):
 def comments_analysis(comments):
     res = analyze_values(comments)
     if res > 0:
-        return "How many comments!"
+        return "Много комментов!"
     elif res < 0:
-        return "There is less comments then was excepted"
+        return "Мало комментов("
     else:
         return ""
 
@@ -26,7 +26,7 @@ def emotions_analysis(comments_text):
     # noinspection PyTypeChecker
     result = 0.5 * emotions["joy"] - 0.15 * emotions["sadness"] - 0.1 * emotions["fear"] \
         - 0.05 * emotions["disgust"] - 0.2 * emotions["anger"]
-    return "Positive" if result >= 0 else "Negative"
+    return "Позитивные" if result >= 0 else "Негативные"
 
 
 def perform_full_prediction(post):
