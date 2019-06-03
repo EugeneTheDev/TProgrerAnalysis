@@ -9,24 +9,22 @@ def check_orthography(text):
         "text": text
     }).json()
 
+    corrections = {}
     if response:
         for el in response:
-            text = text[:el["pos"]] + text[el["pos"]:el["pos"] + el["len"]].replace(el["word"], el["s"][0])\
-                   + text[el["pos"] + el["len"]:]
-        return text
-    else:
-        return ""
+            corrections[el["word"]] = el["s"]
+    return corrections
 
 
 def check_image(url, width, height):
     result = ""
-    if width < 700 and height < 500:
+    if width < 600 and height < 400:
         result += "Изображение слишком маленькое (должно быть больше 700х500)\n"
 
-    if width/height < 0.8 or width/height > 2:
+    if width/height < 0.5 or width/height > 2.2:
         result += "Плохие пропорции\n"
 
-    if util.get_text_square_from_image(url) > 0.2:
+    if util.get_text_square_from_image(url) > 0.5:
         result += "Слишком много текста на изображении\n"
 
     return result
@@ -51,7 +49,7 @@ def perform_full_analysis(post):
     if "text" in post:
         orth_response = check_orthography(post["text"])
         report["text"] = {
-            "send": orth_response == "",
+            "send": orth_response == {},
             "message": orth_response
         }
 
@@ -72,4 +70,3 @@ def perform_full_analysis(post):
         }
 
     return report
-

@@ -4,9 +4,9 @@ from src import util
 def likes_analysis(likes):
     res = analyze_values(likes)
     if res > 0:
-        return "Многа кла$$ов!"
+        return "Много лайков"
     elif res < 0:
-        return "Кла$$ов мало("
+        return "Мало лайков"
     else:
         return ""
 
