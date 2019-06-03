@@ -34,19 +34,19 @@ def perform_full_prediction(post):
 
     likes_response = likes_analysis(post["likes"])
     report["likes"] = {
-        "send": likes_response == "",
+        "send": likes_response != "",
         "message": likes_response
     }
 
     comments_response = comments_analysis(post["comments"])
     report["comments"] = {
-        "send": comments_response == "",
+        "send": comments_response != "",
         "message": comments_response
     }
 
     emotions_response = emotions_analysis(post["comments_text"])
     report["emotions"] = {
-        "send": comments_response == "",
+        "send": comments_response != "",
         "message": emotions_response
     }
     return report

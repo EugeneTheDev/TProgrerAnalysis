@@ -49,7 +49,7 @@ def perform_full_analysis(post):
     if "text" in post:
         orth_response = check_orthography(post["text"])
         report["text"] = {
-            "send": orth_response == {},
+            "send": orth_response != {},
             "message": orth_response
         }
 
@@ -58,14 +58,14 @@ def perform_full_analysis(post):
         for image in post["images"]:
             image_response = check_image(image["url"], image["width"], image["height"])
             report["images"].append({
-                "send": image_response == "",
+                "send": image_response != "",
                 "message": image_response
             })
 
     if "url" in post:
         link_response = check_link(post["url"])
         report["link"] = {
-            "send": link_response == "",
+            "send": link_response != "",
             "message": link_response
         }
 
